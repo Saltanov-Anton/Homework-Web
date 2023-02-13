@@ -27,12 +27,34 @@ public class IngredientImpl implements IngredientService {
         if (!validationService.validation(ingredient)) {
             throw new ValidationException("Есть не заполненные поля");
         }
-        ingredients.put(count, ingredient);
+        ingredients.put(count++, ingredient);
         return ingredient;
     }
 
     @Override
-    public Optional<Ingredient> getIngredient(Long num) {
-        return Optional.of(ingredients.get(num));
+    public Optional<Ingredient> getIngredient(Long id) {
+        return Optional.of(ingredients.get(id));
+    }
+
+    @Override
+    public Map<Long, Ingredient> getAllIngredient() {
+        return ingredients;
+    }
+
+    @Override
+    public Ingredient editIngredient(Long id, Ingredient ingredient) {
+        if (ingredients.containsKey(id)) {
+            ingredients.put(id, ingredient);
+            return ingredient;
+        }
+        return null;
+    }
+
+    @Override
+    public Ingredient deleteIngredient(Long id) {
+        if (ingredients.containsKey(id)) {
+            return ingredients.remove(id);
+        }
+        return null;
     }
 }

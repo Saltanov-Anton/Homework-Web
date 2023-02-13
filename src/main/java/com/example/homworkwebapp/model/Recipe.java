@@ -10,5 +10,5 @@ public class Recipe {
     private String name;
     private int cookingTime;
     private List<Ingredient> ingredients;
-    private String steps;
+    private List<String> steps;
 }
