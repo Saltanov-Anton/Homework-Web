@@ -30,8 +30,8 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Optional<Recipe> getRecipe(Long num) {
-        return Optional.of(recipes.get(num));
+    public Recipe getRecipe(Long num) {
+        return recipes.get(num);
     }
 
     @Override

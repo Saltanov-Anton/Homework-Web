@@ -9,7 +9,7 @@ public interface RecipeService {
 
     Recipe addRecipe(Recipe recipe);
 
-    Optional<Recipe> getRecipe(Long num);
+    Recipe getRecipe(Long num);
 
     Map<Long, Recipe> getAllRecipe();
 
