@@ -26,7 +26,7 @@ public class RecipeServiceImpl implements RecipeService {
     @Value("${name.of.recipe.file}")
     private String dataFileName;
 
-    private IngredientService ingredientService;
+    private final IngredientService ingredientService;
 
     public RecipeServiceImpl(ValidationService validationService, FileService fileService, IngredientService ingredientService) {
         this.validationService = validationService;
@@ -42,6 +42,9 @@ public class RecipeServiceImpl implements RecipeService {
     public Recipe addRecipe(Recipe recipe) {
         if (!validationService.validation(recipe)) {
             throw new ValidationException("Есть не заполненные поля");
+        }
+        while (recipes.containsKey(count)) {
+            count++;
         }
         recipes.put(count++, recipe);
         saveToFile();
@@ -63,6 +66,9 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public Recipe editRecipe(Long id, Recipe recipe) {
+        if (!validationService.validation(recipe)) {
+            throw new ValidationException("Есть не заполненные поля");
+        }
         if (recipes.containsKey(id)) {
             recipes.put(id, recipe);
             saveToFile();
@@ -73,10 +79,13 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public Recipe deleteRecipe(Long id) {
+        Recipe recipe = null;
         if (recipes.containsKey(id)) {
-            return recipes.remove(id);
+            recipe = recipes.remove(id);
+            saveToFile();
+            init();
         }
-        return null;
+        return recipe;
     }
 
     private void saveToFile() {

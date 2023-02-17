@@ -1,9 +1,7 @@
 package com.example.homworkwebapp.controllers;
 
-import com.example.homworkwebapp.exception.ValidationException;
 import com.example.homworkwebapp.model.Recipe;
 import com.example.homworkwebapp.service.RecipeService;
-import com.example.homworkwebapp.service.ValidationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,11 +18,10 @@ import java.util.Map;
 public class RecipeController {
 
     private final RecipeService recipeService;
-    private final ValidationService validationService;
 
-    public RecipeController(RecipeService recipeService, ValidationService validationService) {
+
+    public RecipeController(RecipeService recipeService) {
         this.recipeService = recipeService;
-        this.validationService = validationService;
     }
 
     @PostMapping
@@ -42,11 +39,7 @@ public class RecipeController {
     }
     )
     public ResponseEntity<Recipe> addRecipe(@RequestBody Recipe recipe) {
-        try {
-            recipeService.addRecipe(recipe);
-        } catch (ValidationException e) {
-            return ResponseEntity.status(400).build();
-        }
+        recipeService.addRecipe(recipe);
         return ResponseEntity.ok(recipe);
     }
 
@@ -84,9 +77,6 @@ public class RecipeController {
     }
     )
     public ResponseEntity<Map<Long, Recipe>> getAllRecipe() {
-        if (ObjectUtils.isEmpty(recipeService.getAllRecipe())) {
-            return ResponseEntity.status(404).build();
-        }
         return ResponseEntity.ok(recipeService.getAllRecipe());
     }
 
@@ -108,8 +98,6 @@ public class RecipeController {
         Recipe recipe1 = recipeService.editRecipe(id, recipe);
         if (recipe1 == null) {
             return ResponseEntity.notFound().build();
-        }else if (validationService.validation(recipe)) {
-            return ResponseEntity.status(400).build();
         }
         return ResponseEntity.ok(recipe1);
     }

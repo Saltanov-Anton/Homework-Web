@@ -13,14 +13,13 @@ public class FileServiceImpl implements FileService {
     private String dataFilePath;
 
     @Override
-    public boolean saveToFile(String json, String dataFileName) {
+    public void saveToFile(String json, String dataFileName) {
         try {
+            clearFile();
             Files.writeString(Path.of(dataFilePath, dataFileName), json);
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
-        return true;
     }
 
     @Override
@@ -31,5 +30,15 @@ public class FileServiceImpl implements FileService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public void clearFile() {
+        try {
+            Files.delete(Path.of(dataFilePath));
+            Files.createFile(Path.of(dataFilePath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

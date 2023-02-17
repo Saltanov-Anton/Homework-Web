@@ -20,7 +20,7 @@ public class IngredientImpl implements IngredientService {
 
     private static long count = 1;
 
-    private static TreeMap<Long, Ingredient> ingredients = new TreeMap<>();
+    private static Map<Long, Ingredient> ingredients = new TreeMap<>();
     private final ValidationService validationService;
     private final FileService fileService;
     @Value("${name.of.ingredient.file}")
@@ -41,6 +41,9 @@ public class IngredientImpl implements IngredientService {
         if (!validationService.validation(ingredient)) {
             throw new ValidationException("Есть не заполненные поля");
         }
+        while (ingredients.containsKey(count)) {
+            count++;
+        }
         ingredients.put(count++, ingredient);
         saveToFile();
         return ingredient;
@@ -58,6 +61,9 @@ public class IngredientImpl implements IngredientService {
 
     @Override
     public Ingredient editIngredient(Long id, Ingredient ingredient) {
+        if (!validationService.validation(ingredient)) {
+            throw new ValidationException("Есть не заполненные поля");
+        }
         if (ingredients.containsKey(id)) {
             ingredients.put(id, ingredient);
             saveToFile();
@@ -68,10 +74,13 @@ public class IngredientImpl implements IngredientService {
 
     @Override
     public Ingredient deleteIngredient(Long id) {
+        Ingredient ingredient = null;
         if (ingredients.containsKey(id)) {
-            return ingredients.remove(id);
+            ingredient =  ingredients.remove(id);
+            saveToFile();
+            init();
         }
-        return null;
+        return ingredient;
     }
 
     private void saveToFile() {

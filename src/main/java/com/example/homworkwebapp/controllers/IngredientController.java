@@ -1,9 +1,7 @@
 package com.example.homworkwebapp.controllers;
 
-import com.example.homworkwebapp.exception.ValidationException;
 import com.example.homworkwebapp.model.Ingredient;
 import com.example.homworkwebapp.service.IngredientService;
-import com.example.homworkwebapp.service.ValidationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,11 +18,9 @@ import java.util.Map;
 public class IngredientController {
 
     private final IngredientService ingredientService;
-    private final ValidationService validationService;
 
-    public IngredientController(IngredientService ingredientService, ValidationService validationService) {
+    public IngredientController(IngredientService ingredientService) {
         this.ingredientService = ingredientService;
-        this.validationService = validationService;
     }
     @PostMapping
     @Operation(summary = "добавление ингредиента", description = "в случае успешного добавления, " +
@@ -41,11 +37,8 @@ public class IngredientController {
     }
     )
     public ResponseEntity<Ingredient> addIngredient(@RequestBody Ingredient ingredient) {
-        try {
-            return ResponseEntity.ok(ingredientService.addIngredient(ingredient));
-        } catch (ValidationException e) {
-            return ResponseEntity.status(400).build();
-        }
+        return ResponseEntity.ok(ingredientService.addIngredient(ingredient));
+
     }
 
     @GetMapping("/{id}")
@@ -62,9 +55,6 @@ public class IngredientController {
     }
     )
     public ResponseEntity<Ingredient> getIngredientById(@PathVariable Long id) {
-        if (ObjectUtils.isEmpty(ingredientService.getIngredient(id))) {
-            return ResponseEntity.status(404).build();
-        }
         return ResponseEntity.ok(ingredientService.getIngredient(id));
     }
 
@@ -106,8 +96,6 @@ public class IngredientController {
         Ingredient ingredient1 = ingredientService.editIngredient(id, ingredient);
         if (ingredient1 == null) {
             return ResponseEntity.notFound().build();
-        } else if (validationService.validation(ingredient)) {
-            return ResponseEntity.status(400).build();
         }
         return ResponseEntity.ok(ingredient1);
     }
