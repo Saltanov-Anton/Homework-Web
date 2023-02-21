@@ -9,7 +9,7 @@ public interface IngredientService {
 
     Ingredient addIngredient(Ingredient ingredient);
 
-    Optional<Ingredient> getIngredient(Long num);
+    Ingredient getIngredient(Long num);
 
     Map<Long, Ingredient> getAllIngredient();
 

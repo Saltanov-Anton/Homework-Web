@@ -32,8 +32,8 @@ public class IngredientImpl implements IngredientService {
     }
 
     @Override
-    public Optional<Ingredient> getIngredient(Long id) {
-        return Optional.of(ingredients.get(id));
+    public Ingredient getIngredient(Long id) {
+        return ingredients.get(id);
     }
 
     @Override
