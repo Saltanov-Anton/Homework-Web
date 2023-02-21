@@ -41,7 +41,7 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public Recipe addRecipe(Recipe recipe) {
         if (!validationService.validation(recipe)) {
-            throw new ValidationException("Есть не заполненные поля");
+            throw new ValidationException("Есть незаполненные поля");
         }
         while (recipes.containsKey(count)) {
             count++;
@@ -67,7 +67,7 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public Recipe editRecipe(Long id, Recipe recipe) {
         if (!validationService.validation(recipe)) {
-            throw new ValidationException("Есть не заполненные поля");
+            throw new ValidationException("Есть незаполненные поля");
         }
         if (recipes.containsKey(id)) {
             recipes.put(id, recipe);
@@ -88,7 +88,7 @@ public class RecipeServiceImpl implements RecipeService {
         return recipe;
     }
 
-    private void saveToFile() {
+    public void saveToFile() {
         try {
             String json = new ObjectMapper().writeValueAsString(recipes);
             fileService.saveToFile(json, dataFileName);
@@ -97,7 +97,8 @@ public class RecipeServiceImpl implements RecipeService {
         }
     }
 
-    private void readFromFile() {
+    @Override
+    public void readFromFile() {
         try {
             String json = fileService.readFromFile(dataFileName);
             recipes = new ObjectMapper().readValue(json, new TypeReference<>() {
