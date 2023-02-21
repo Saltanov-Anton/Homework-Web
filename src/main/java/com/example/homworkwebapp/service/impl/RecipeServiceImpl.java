@@ -12,7 +12,7 @@ import java.util.TreeMap;
 
 @Service
 public class RecipeServiceImpl implements RecipeService {
-    private static final long count = 1;
+    private static long count = 1;
     private final Map<Long, Recipe> recipes = new TreeMap<>();
     private final ValidationService validationService;
 
@@ -25,12 +25,34 @@ public class RecipeServiceImpl implements RecipeService {
         if (!validationService.validation(recipe)) {
             throw new ValidationException("Есть не заполненные поля");
         }
-
-        return recipes.put(count, recipe);
+        recipes.put(count++, recipe);
+        return recipe;
     }
 
     @Override
-    public Optional<Recipe> getRecipe(Long num) {
-        return Optional.of(recipes.get(num));
+    public Recipe getRecipe(Long num) {
+        return recipes.get(num);
+    }
+
+    @Override
+    public Map<Long, Recipe> getAllRecipe() {
+        return recipes;
+    }
+
+    @Override
+    public Recipe editRecipe(Long id, Recipe recipe) {
+        if (recipes.containsKey(id)) {
+            recipes.put(id, recipe);
+            return recipe;
+        }
+        return null;
+    }
+
+    @Override
+    public Recipe deleteRecipe(Long id) {
+        if (recipes.containsKey(id)) {
+            return recipes.remove(id);
+        }
+        return null;
     }
 }
