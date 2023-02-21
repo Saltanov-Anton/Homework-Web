@@ -16,4 +16,6 @@ public interface RecipeService {
     Recipe editRecipe(Long id, Recipe recipe);
 
     Recipe deleteRecipe(Long id);
+
+    void readFromFile();
 }
