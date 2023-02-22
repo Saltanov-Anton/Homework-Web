@@ -4,7 +4,6 @@ import com.example.homworkwebapp.service.FileService;
 import com.example.homworkwebapp.service.RecipeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.nio.file.Files;
 
 @RestController
 @RequestMapping("/files")
@@ -40,6 +38,22 @@ public class FileController {
     @Operation(summary = "Выгрузка файлов")
     public ResponseEntity<InputStreamResource> downloadRecipeFile() throws FileNotFoundException {
         File recipeFile = fileService.getFile(dataRecipeFileName);
+        if (recipeFile.exists()) {
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(recipeFile));
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentLength(recipeFile.length())
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + recipeFile.getName())
+                    .body(resource);
+        } else {
+            return ResponseEntity.noContent().build();
+        }
+    }
+
+    @GetMapping("recipe/export/txt")
+    @Operation(summary = "Выгрузка файлов")
+    public ResponseEntity<InputStreamResource> downloadRecipeFileTxt() throws FileNotFoundException {
+        File recipeFile = recipeService.fileToTxt();
         if (recipeFile.exists()) {
             InputStreamResource resource = new InputStreamResource(new FileInputStream(recipeFile));
             return ResponseEntity.ok()
