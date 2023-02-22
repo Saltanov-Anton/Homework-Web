@@ -2,6 +2,7 @@ package com.example.homworkwebapp.service;
 
 import com.example.homworkwebapp.model.Recipe;
 
+import java.io.File;
 import java.util.Map;
 import java.util.Optional;
 
@@ -18,4 +19,6 @@ public interface RecipeService {
     Recipe deleteRecipe(Long id);
 
     void readFromFile();
+
+    File fileToTxt();
 }

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -25,6 +26,9 @@ public class RecipeServiceImpl implements RecipeService {
     private final FileService fileService;
     @Value("${name.of.recipe.file}")
     private String dataFileName;
+
+    @Value("${name.of.recipe.txt.file}")
+    private String dataTxtFileName;
 
     private final IngredientService ingredientService;
 
@@ -106,5 +110,32 @@ public class RecipeServiceImpl implements RecipeService {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+    }
+    @Override
+    public File fileToTxt() {
+        return fileService.saveToFile(recipeToString(), dataTxtFileName);
+    }
+
+    public String recipeToString() {
+        StringBuilder sb = new StringBuilder();
+
+        for (Recipe recipe : recipes.values()) {
+            sb.append(recipe.getName()).append("\n");
+            sb.append("Время приготовления - " + recipe.getCookingTime() + "\n");
+            sb.append("Ингредиенты: " + "\n");
+
+            int count = 1;
+            for (Ingredient ingredient : recipe.getIngredients()) {
+                sb.append(count++ + " ").append(ingredient.getName())
+                        .append(" - " + ingredient.getQuantity() + ingredient.getUnit() + "\n");
+            }
+
+            sb.append("Шаги приготовления" + "\n");
+            int countSteps = 1;
+            for (String steps : recipe.getSteps()) {
+                sb.append(countSteps++ + " ").append(steps + "\n");
+            }
+        }
+        return sb.toString();
     }
 }

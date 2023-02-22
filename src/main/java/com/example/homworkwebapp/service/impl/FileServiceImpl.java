@@ -14,13 +14,14 @@ public class FileServiceImpl implements FileService {
     private String dataFilePath;
 
     @Override
-    public void saveToFile(String json, String dataFileName) {
+    public File saveToFile(String json, String dataFileName) {
         try {
             clearFile();
-            Files.writeString(Path.of(dataFilePath, dataFileName), json);
+            return Files.writeString(Path.of(dataFilePath, dataFileName), json).toFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     @Override
